@@ -436,10 +436,8 @@ param_grid = [{
         ,'reg_lambda':reg_lambda 
 }]
 
-
-
 ######################################################################################################
-# 1) ATLAS TIME MODEL
+# MODEL ING
 get_cols=FeatureSelector(feature_names=XFeatures.columns.tolist())
 fit_params ={'gs__sample_weight':sample_weights} 
 gs = GridSearchCV(estimator=clf, param_grid=param_grid, scoring=scorers, refit='balancedAUC', cv=cv, verbose=2, n_jobs=3)
