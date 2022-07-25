@@ -55,4 +55,9 @@ python test.py \
 --savefolder /path/to/save_folder/ \
 --targetcat -1 0 1
 
-## run_shapley.py:
+# Shapley values for Feature importance:
+
+The code procede with the computation of Shapley values using the recently published python implementation:
+see "https://shap.readthedocs.io/en/latest/example_notebooks/overviews/An%20introduction%20to%20explainable%20AI%20with%20Shapley%20values.html"
+
+For each output class the code compute the shapley values per observation and the shapley feature interaction.
