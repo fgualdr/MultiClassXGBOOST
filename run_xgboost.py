@@ -2,22 +2,6 @@
 
 import sys
 import os
-import warnings
-warnings.simplefilter(action = 'ignore', category=FutureWarning)
-warnings.filterwarnings('ignore')
-def ignore_warn(*args, **kwargs):
-    pass
-
-warnings.filterwarnings(action='ignore', category=UserWarning)
-warnings.filterwarnings(action="ignore", message=r'.*Use subset.*of np.ndarray is not recommended')
-warnings.filterwarnings(action="ignore", message=r'FutureWarning')
-warnings.warn = ignore_warn #ignore annoying warning (from sklearn and seaborn)
-
-# import warnings filter
-from warnings import simplefilter
-# ignore all future warnings
-simplefilter(action='ignore', category=FutureWarning)
-
 from sklearn import preprocessing
 from joblib import Memory
 import joblib
