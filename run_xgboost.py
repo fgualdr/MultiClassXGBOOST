@@ -64,11 +64,7 @@ print("targetcat = %s" % args.targetcat);
 targetcat=args.targetcat
 targetki=args.targetki
 
-# firstarg='ki1'
-# Load the Data it will be split into features and targets:
-
-# Load the Features variable - MOTIFS
-# Load the Features variable - Time + ATLAS 
+# Load the Features variable
 XFeatures = pd.read_csv(args.features, sep='\t',index_col=0)
 del XFeatures["Promoter"]
 XFeatures = XFeatures.sort_index() 
@@ -80,7 +76,7 @@ rows_with_NaN = XFeatures[row_has_NaN]
 np.any(np.isnan(XFeatures))
 np.all(np.isfinite(XFeatures))
 
-# target variables
+# Load target variables
 YTargets = pd.read_csv(args.target, sep='\t',index_col=0)
 YTargets = YTargets[YTargets.index.isin(XFeatures.index)]
 YTargets = YTargets.sort_index() 
@@ -398,7 +394,6 @@ clf = xgb.XGBClassifier(base_score=0.5, colsample_bylevel=1, n_jobs=4,eval_metri
                                            subsample=1,verbosity = 1)
 
 # a list of dictionaries to specify the parameters that we'd want to tune
-
 learning_rate = [ 0.1, 0.2, 0.3 ,0.4] #4
 n_est = [60, 120,240,480] #4
 max_depth = [3,6,12] #3
