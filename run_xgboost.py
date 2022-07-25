@@ -66,7 +66,6 @@ targetki=args.targetki
 
 # Load the Features variable
 XFeatures = pd.read_csv(args.features, sep='\t',index_col=0)
-del XFeatures["Promoter"]
 XFeatures = XFeatures.sort_index() 
 print(XFeatures.shape)
 # Check for finite numbers:
