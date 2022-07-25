@@ -42,3 +42,12 @@ The code exploit 12CPUs.
 
 To generate a python environment to execute the code run:
 conda create -n env scikit-learn numpy pandas matplotlib xgboost skater shap seaborn cycler dill scipy patsy
+
+code can be run as:
+
+python test.py \
+--targetki ki1 \
+--features /path/to/features_matrix/ \
+--target /path/to/target_matrix/ \
+--savefolder /path/to/save_folder/ \
+--targetcat -1 0 1
