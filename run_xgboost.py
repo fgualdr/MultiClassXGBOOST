@@ -110,7 +110,6 @@ cols = cols.str.replace(')', '_')
 cols = cols.str.replace(',', '_')
 cols = cols.str.replace(':', '_')
 cols = cols.str.replace('-', '_')
-XFeatures.columns = 'TIMEATLAS_' + cols
 
 X = XFeatures
 X,y=X,YTargets
