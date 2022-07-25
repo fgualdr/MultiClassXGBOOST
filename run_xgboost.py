@@ -429,3 +429,86 @@ filename = save + '/XGBOOST_model.sav'
 with open(filename, 'wb') as file:
     joblib.dump(XGBOOST_model, file)
 results.to_csv(save + '/Final_results.txt',sep ='\t',header=True, index=True)
+
+
+#########################################################################################################
+# SHAP
+
+import shap
+from shap import KernelExplainer, TreeExplainer, Explanation
+
+# load the model
+filename = save + 'XGBOOST_model.sav'
+with open(filename, 'rb') as file:
+    XGBOOST_model = joblib.load(file)
+# 
+model_list = {
+        "XGBOOST_model": XGBOOST_model
+}
+modname = "XGBOOST_model"
+model = model_list["XGBOOST_model"]
+feature_names = np.array(model.named_steps['get_cols'].feature_names)
+X_transf = model[:-1].transform(XD)
+X_transf = pd.DataFrame(X_transf, index=XD.index, columns=feature_names)
+modelLR = model['gs'].best_estimator_
+class_names=modelLR.classes_
+y_sel = le.transform(yD[target])
+y_sel = pd.DataFrame(y_sel,index=yD.index)
+# explainer 
+# explain the model's predictions using SHAP
+explainer = shap.TreeExplainer(modelLR)
+shap_values = explainer.shap_values(X_transf)
+shap_interaction_values = explainer.shap_interaction_values(X_transf)
+np.asarray(shap_values).shape
+np.asarray(shap_interaction_values).shape
+expected_value = explainer.expected_value
+cn =  X_transf.columns
+cn = cn + '_original'
+# save the SHAP per output
+for i, label in enumerate(class_names):
+    df1 = pd.DataFrame(shap_values[i], columns = X_transf.columns,index=X_transf.index)
+    df2 = pd.DataFrame(np.repeat(expected_value[i], X_transf.shape[0]), columns = {'base_value'}, index=X_transf.index)
+    df3 = X_transf.copy()
+    df3.columns = cn 
+    df4 = modelLR.predict_proba(X_transf)
+    df4 = pd.DataFrame(df4, columns = class_names, index=X_transf.index)
+    df= pd.concat([df1, df2, df3, df4], axis=1)
+    df.to_csv(save + modname + '_SHAP_target_'+str(label)+'.csv',sep ='\t')   
+# all features by class shap:
+shap.summary_plot(shap_values, X_transf, feature_names=X_transf.columns,show=False,class_names=class_names,plot_type="bar")
+plt.savefig(save + modname + '_SHAP_Summary.pdf')
+plt.clf()
+# Summary and bar plot by labels
+for i, label in enumerate(class_names):
+    if label != 1:
+        # Summary
+        shap.summary_plot(shap_values[i], X_transf, feature_names=X_transf.columns,show=False)
+        plt.savefig(save + modname + '_SHAP_Summary_'+ str(label) +'.pdf')
+        plt.clf() 
+        # Bar
+        shap.summary_plot(shap_values[i], X_transf, feature_names=X_transf.columns,show=False,plot_type="bar")
+        plt.savefig(save + modname + '_SHAP_Bar_plot_'+ str(label) +'.pdf')
+        plt.clf()  
+        # decision plot
+        prediction = pd.DataFrame(modelLR.predict(X_transf),index=X_transf.index)[0]
+        prediction = prediction[prediction.index.isin(y_sel[y_sel==label].index)]
+        prediction_save= pd.concat([prediction, y_sel[y_sel==label]], axis=1)
+        prediction_save.to_csv(save + modname + '_SHAP_compare_predicted_vs_real_'+ str(label) +'.csv',sep ='\t')
+for i, label in enumerate(class_names):
+    if label != 1:
+        mean_shap = np.abs(shap_interaction_values[i]).mean(0)
+        df = pd.DataFrame(mean_shap,index=X_transf.columns,columns=X_transf.columns)
+        df.to_csv(save + modname + '_Mean_SHAPInteractions_target_'+str(label)+'.csv',sep ='\t')   
+        # times off diagonal by 2
+        df.where(df.values == np.diagonal(df),df.values*2,inplace=True)
+        # display 
+        plt.figure(figsize=(10, 10), facecolor='w', edgecolor='k')
+        sns.set(font_scale=0.3)
+        sns.heatmap(df,cmap='coolwarm',annot=True,fmt='.3g',cbar=False)
+        plt.yticks(rotation=0) 
+        plt.savefig(save + modname + '_SHAP_Interaction_matrix_'+ str(label) +'.pdf')
+        plt.clf() 
+        # diplay bees interactions:
+        shap.summary_plot(shap_interaction_values[i], X_transf)
+        plt.savefig(save + modname + '_SHAP_Interaction_matrix_Bees_'+ str(label) +'.pdf')
+        plt.clf() 
