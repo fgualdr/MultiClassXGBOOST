@@ -1,4 +1,6 @@
-# MultiClassXGBOOST
+# MultiClassXGBOOST with SHAPLEY Feature Importance
+
+## run_xgboost.py:
 
 Code to run XGBoost classifier on multiuple targets using same set of features.
 This code has been used to model Kinase Inhibitor (KI) action using Multiple features (i.e. chromatin modifications, TFs chip-seq binding etc..).
