@@ -393,28 +393,48 @@ clf = xgb.XGBClassifier(base_score=0.5, colsample_bylevel=1, n_jobs=4,eval_metri
                                            subsample=1,verbosity = 1)
 
 # a list of dictionaries to specify the parameters that we'd want to tune
-learning_rate = [ 0.1, 0.2, 0.3 ,0.4] #4
-n_est = [60, 120,240,480] #4
-max_depth = [3,6,12] #3
 subsample = [0.8] #2
+objective = ['multi:softprob']
 colsample_bytree = [ 0.8] #2
-gamma= [0,0.5,1.5,2] #4
-reg_alpha=[0,0.1,0.2,0.4,0.8] #5
+gamma= [0.01,0.1,0.5,1,2] #4
+reg_alpha=[0.1,0.2,0.4,0.8] #5
 reg_lambda=[0.1,0.5,1,1.5,2] #5
+max_depth = [3,6,9] #3
+max_leaves = [0]
+max_bin = [30, 60, 90, 150, 200, 250, 300]
+learning_rate  = [ 0.05, 0.07, 0.1] #4
+n_estimators = [50,150,300,600]
+booster = ['gbtree']
+tree_method = ['exact']
+n_jobs = [4]
+sampling_method = ['gradient_based']
+base_score=[0.5]
+min_child_weight=[4]
+default_direction = ['learn']
+grow_policy =['depthwise','lossguide']
 
 param_grid = [{ 
-        'gamma': gamma
-        ,'learning_rate': learning_rate
-        ,'n_estimators': n_est
-        ,'subsample':subsample
-        ,'max_depth': max_depth
+        'subsample': subsample
+        ,'objective' : objective
+        ,'default_direction' : default_direction
+        ,'min_child_weight' : min_child_weight
         ,'colsample_bytree': colsample_bytree
+        ,'gamma': gamma
         ,'reg_alpha':reg_alpha
-        ,'reg_lambda':reg_lambda 
+        ,'reg_lambda': reg_lambda
+        ,'max_depth': max_depth
+        ,'max_leaves':max_leaves
+        ,'grow_policy': grow_policy
+        ,'learning_rate': learning_rate
+        ,'n_estimators': n_estimators
+        ,'booster':booster
+        ,'tree_method': tree_method
+        ,'n_jobs': n_jobs
+        ,'base_score': base_score
 }]
 
 ######################################################################################################
-# MODEL ING
+# MODELING
 get_cols=FeatureSelector(feature_names=XFeatures.columns.tolist())
 fit_params ={'gs__sample_weight':sample_weights} 
 gs = GridSearchCV(estimator=clf, param_grid=param_grid, scoring=scorers, refit='balancedAUC', cv=cv, verbose=2, n_jobs=3)
