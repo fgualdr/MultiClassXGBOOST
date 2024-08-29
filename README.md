@@ -40,6 +40,6 @@ conda create -n env scikit-learn numpy pandas matplotlib xgboost skater shap sea
 python test.py --targetki ki1 --features /path/to/features_matrix/ --target /path/to/target_matrix/ --savefolder /path/to/save_folder/ --targetcat -1 0 1
 
 # Shapley Values for Feature Importance:
-The code proceeds to compute Shapley values using a recently published Python implementation. For details, see the following resource: SHAP documentation.
+The code proceeds to compute Shapley values using a recently published Python implementation. For details, see the following resource: [SHAP documentation](https://shap.readthedocs.io/en/latest/example_notebooks/overviews/An%20introduction%20to%20explainable%20AI%20with%20Shapley%20values.html).
 
 For each output class, the code computes the Shapley values per observation and the Shapley feature interaction.
